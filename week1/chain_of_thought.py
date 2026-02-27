@@ -8,7 +8,15 @@ load_dotenv()
 NUM_RUNS_TIMES = 5
 
 # TODO: Fill this in!
-YOUR_SYSTEM_PROMPT = ""
+YOUR_SYSTEM_PROMPT = """
+you are a mathematical engine that solves modular problems
+heres how you should do your job
+1. identify the modulus
+2. apply euler's totien theorem
+3. reduce the exponent
+4. break down the remaining power into smaller and manageable squares
+5. combine the results to find the final two digits
+"""
 
 
 USER_PROMPT = """

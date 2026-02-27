@@ -15,8 +15,16 @@ Keep the implementation minimal.
 """
 
 # TODO: Fill this in!
-YOUR_REFLEXION_PROMPT = ""
+YOUR_REFLEXION_PROMPT = """
+CRITICAL INSTRUCTION: You must output ONLY the function definition for is_valid_password(password: str) -> bool. 
 
+1. Use the EXACT name: is_valid_password
+2. Requirements to include: length >= 8, at least one uppercase, one lowercase, one digit, and one special character (!@#$%^&*()-_).
+3. Do NOT include classes, example usage, print statements, or any other code.
+4. Output ONLY the code block.
+
+Fix the following code based on these failures:
+"""
 
 # Ground-truth test suite used to evaluate generated code
 SPECIALS = set("!@#$%^&*()-_")

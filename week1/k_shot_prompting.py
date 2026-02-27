@@ -7,7 +7,26 @@ load_dotenv()
 NUM_RUNS_TIMES = 5
 
 # TODO: Fill this in!
-YOUR_SYSTEM_PROMPT = ""
+YOUR_SYSTEM_PROMPT = """
+you must reverse words character per character. Do not treat them like a word but treat them as a single units
+
+word: apple
+process: a-p-p-l-e -> e-l-p-p-a
+reversed: elppa
+
+word: coffee
+process: c-o-f-f-e-e -> e-e-f-f-o-c
+reversed: eeffoc
+
+word: http
+process: h-t-t-p -> p-t-t-h
+reversed: ptth
+
+word: status
+process: s-t-a-t-u-s -> s-u-t-a-t-s
+reversed: sutats
+"""
+
 
 USER_PROMPT = """
 Reverse the order of letters in the following word. Only output the reversed word, no other text:
