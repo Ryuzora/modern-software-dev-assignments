@@ -9,7 +9,14 @@ load_dotenv()
 NUM_RUNS_TIMES = 5
 
 # TODO: Fill this in! Try to get as close to 100% correctness across all runs as possible.
-YOUR_SYSTEM_PROMPT = ""
+YOUR_SYSTEM_PROMPT = """You are a precise mathematical assistant. 
+When solving problems, follow these steps:
+1. Identify all given values and the total distance.
+2. Calculate the specific milestone for each stop relative to the start (0 miles).
+3. Subtract the first stop milestone from the second stop milestone to find the distance between them.
+4. Double-check your subtraction.
+
+Your final line must strictly follow the format "Answer: <number>". Only provide the numerical value."""
 
 USER_PROMPT = """
 Solve this problem, then give the final answer on the last line as "Answer: <number>".

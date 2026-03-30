@@ -70,7 +70,21 @@ TOOL_REGISTRY: Dict[str, Callable[..., str]] = {
 # ==========================
 
 # TODO: Fill this in!
-YOUR_SYSTEM_PROMPT = ""
+YOUR_SYSTEM_PROMPT = """
+You are a function calling assistant. You must call 'output_every_func_return_type'.
+Return ONLY a JSON object. No preamble, no markdown fences.
+
+Required JSON Structure:
+{
+  "tool": "output_every_func_return_type",
+  "args": {
+    "file_path": ""
+  }
+}
+
+CRITICAL: Set "file_path" to an empty string "" to analyze the current script. 
+Do not make up a file path.
+"""
 
 
 def resolve_path(p: str) -> str:
