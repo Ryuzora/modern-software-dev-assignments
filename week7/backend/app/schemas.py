@@ -24,8 +24,27 @@ class NotePatch(BaseModel):
     content: str | None = None
 
 
+class TagCreate(BaseModel):
+    name: str = Field(min_length=1, max_length=80)
+
+
+class TagRead(BaseModel):
+    id: int
+    name: str
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class TagPatch(BaseModel):
+    name: str | None = Field(default=None, min_length=1, max_length=80)
+
+
 class ActionItemCreate(BaseModel):
     description: str
+    tag_ids: list[int] = Field(default_factory=list)
 
 
 class ActionItemRead(BaseModel):
@@ -34,6 +53,7 @@ class ActionItemRead(BaseModel):
     completed: bool
     created_at: datetime
     updated_at: datetime
+    tags: list[TagRead] = Field(default_factory=list)
 
     class Config:
         from_attributes = True
@@ -42,6 +62,8 @@ class ActionItemRead(BaseModel):
 class ActionItemPatch(BaseModel):
     description: str | None = None
     completed: bool | None = None
+    # When set (including []), replaces the full tag set for this item.
+    tag_ids: list[int] | None = None
 
 
 class ActionItemsBatchSetCompletedRequest(BaseModel):
