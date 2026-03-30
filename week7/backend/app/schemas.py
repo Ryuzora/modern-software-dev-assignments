@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator
 
 
 class NoteCreate(BaseModel):
@@ -44,3 +44,28 @@ class ActionItemPatch(BaseModel):
     completed: bool | None = None
 
 
+class ActionItemsBatchSetCompletedRequest(BaseModel):
+    item_ids: list[int] = Field(min_length=1, max_length=200)
+    completed: bool
+
+    @field_validator("item_ids")
+    @classmethod
+    def ensure_positive_unique_ids(cls, value: list[int]) -> list[int]:
+        if any(item_id <= 0 for item_id in value):
+            raise ValueError("item_ids must contain only positive integers")
+        if len(set(value)) != len(value):
+            raise ValueError("item_ids must not contain duplicates")
+        return value
+
+
+class ActionItemsBatchSetCompletedResponse(BaseModel):
+    updated_count: int
+    items: list[ActionItemRead]
+
+
+class NotesStatsRead(BaseModel):
+    total_notes: int
+    total_characters: int
+    average_characters: float
+    longest_note_title: str | None = None
+    shortest_note_title: str | None = None

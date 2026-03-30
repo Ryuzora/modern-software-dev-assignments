@@ -1,12 +1,19 @@
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import asc, desc, select
 from sqlalchemy.orm import Session
 
 from ..db import get_db
 from ..models import ActionItem
-from ..schemas import ActionItemCreate, ActionItemPatch, ActionItemRead
+from ..schemas import (
+    ActionItemCreate,
+    ActionItemPatch,
+    ActionItemRead,
+    ActionItemsBatchSetCompletedRequest,
+    ActionItemsBatchSetCompletedResponse,
+)
 
 router = APIRouter(prefix="/action-items", tags=["action_items"])
 
@@ -68,5 +75,35 @@ def patch_item(item_id: int, payload: ActionItemPatch, db: Session = Depends(get
     db.flush()
     db.refresh(item)
     return ActionItemRead.model_validate(item)
+
+
+@router.post("/batch-set-completed", response_model=ActionItemsBatchSetCompletedResponse)
+def batch_set_completed(
+    payload: ActionItemsBatchSetCompletedRequest, db: Session = Depends(get_db)
+) -> ActionItemsBatchSetCompletedResponse:
+    try:
+        rows = db.execute(select(ActionItem).where(ActionItem.id.in_(payload.item_ids))).scalars().all()
+        found_ids = {row.id for row in rows}
+        missing_ids = [item_id for item_id in payload.item_ids if item_id not in found_ids]
+        if missing_ids:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Action items not found for ids: {missing_ids}",
+            )
+
+        for row in rows:
+            row.completed = payload.completed
+            db.add(row)
+        db.flush()
+
+        ordered_items = sorted(rows, key=lambda item: payload.item_ids.index(item.id))
+        return ActionItemsBatchSetCompletedResponse(
+            updated_count=len(ordered_items),
+            items=[ActionItemRead.model_validate(item) for item in ordered_items],
+        )
+    except HTTPException:
+        raise
+    except SQLAlchemyError as exc:
+        raise HTTPException(status_code=500, detail="Failed to update action items") from exc
 
 
